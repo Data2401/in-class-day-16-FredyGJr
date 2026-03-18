@@ -1,6 +1,6 @@
 ---
 title: "Practice with dplyr and ggplot2"
-author: "Dr. Shoemaker"
+author: "Fredy Guevara"
 date: "DATA 2401"
 output: html_document
 ---
@@ -26,31 +26,52 @@ This data is the heights of humans, divided by their biological sex.
 Use ggplot to make a histogram of all of the heights:
 
 ```{r}
-
+ggplot(heights, aes(height)) + geom_histogram()
 
 ```
 
 Change up the binwidth and see how the plots change. Try 1, 5, 10, and 20
 
 ```{r}
+#binwidth 1
+ggplot(heights, aes(x = height)) +
+  geom_histogram(binwidth = 1)
+# binwidth 5
+ggplot(heights, aes(x = height)) +
+  geom_histogram(binwidth = 5)
+#binwidth 10
+ggplot(heights, aes(x = height)) +
+  geom_histogram(binwidth = 10)
+#binwidth 20
+ggplot(heights, aes(x = height)) +
+  geom_histogram(binwidth = 20)
 
 ```
 
 Smooth this out to an emperical density with `geom_density()`
 
 ```{r}
+ggplot(heights, aes(x = height)) + geom_density()
+
 
 ```
 
 Use a new argument in the `aes()`, `group =` to split this density by sex
 
 ```{r}
+ggplot(heights, aes(x = height, group = sex)) + geom_density()
+
+
 
 ```
 
 OR we can do it with `color` or `fill.` If you say you want to color by sex, R knows that you want a different curve for each of them.
 
 ```{r}
+ggplot(heights, aes(x = height, colour = sex)) + geom_density()
+
+# tried with fill for next part
+ggplot(heights, aes(x = height, fill = sex)) + geom_density()
 
 
 ```
@@ -59,12 +80,20 @@ If you've used fill, then there is now a slight issue that they are overlapped. 
 
 ```{r}
 
+ggplot(heights, aes(x = height, fill = sex)) + geom_density(alpha = 1/2) 
+
 
 ```
 
 Let's make some boxplots of the same information.
 
 ```{r}
+ggplot(heights, aes(x = height)) + geom_boxplot()
+
+
+ggplot(heights, aes(x = height, y = sex)) + geom_boxplot()
+
+ggplot(heights, aes(x = height, color = sex)) + geom_boxplot()
 
 ```
 
@@ -73,6 +102,12 @@ Let's make some boxplots of the same information.
 Find the mean and median overall. 
 
 ```{r}
+library(dplyr)
+
+heights %>%
+  summarize(median_height = median(height),
+            mean_height = mean(height))
+
 
 ```
 
@@ -80,12 +115,22 @@ Find the mean and median for both groups.
 
 ```{r}
 
-
+heights %>%
+  group_by(sex) %>%
+  summarize(
+    mean_height = mean(height),
+    median_height = median(height)
+  )
 ```
 
 How tall is the tallest woman? How short is the shortest man? 
 
 ```{R}
+heights %>% summarise(
+  max_height = max(height),
+  min_height = min(height),
+  .by = sex
+)
 
 
 ```
@@ -93,6 +138,14 @@ How tall is the tallest woman? How short is the shortest man?
 Use your summary table and pipe it to a ggplot to make a bar graph showing the mean of both groups. 
 
 ```{R}
+heights %>%
+  group_by(sex) %>%
+  summarize(
+    mean_height = mean(height),
+    median_height = median(height)
+) %>% ggplot( aes(x = sex, y = mean_height)) + geom_col()
+
+
 
 
 ```
@@ -114,8 +167,7 @@ Let's look at the democratic vote by state for 2000. We can't use `geom_bar` for
 Make a bar graph of the democratic vote by state in 2000. 
 
 ```{r}
-
-
+ggplot(votedata %>% filter(year == 2000)) + geom_col(aes(x = demVote, y = state))
 
 ```
 
