@@ -167,7 +167,7 @@ Let's look at the democratic vote by state for 2000. We can't use `geom_bar` for
 Make a bar graph of the democratic vote by state in 2000. 
 
 ```{r}
-ggplot(votedata %>% filter(year == 2000)) + geom_col(aes(x = demVote, y = state))
+ggplot(votedata %>% filter(year == 2000)) + geom_col(aes(x = state, y = demVote))
 
 ```
 
@@ -176,6 +176,7 @@ Well this looks awful. We have two options: swap the x and y or the more fun sou
 Use `coord_flip()` on the previous graph to make it better. 
 
 ```{r fig.height=7, fig.width=5}
+
 
 
 
